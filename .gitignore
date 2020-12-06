@@ -1,5 +1,5 @@
 # Don't commit data:
-./data/*.txt
+data/*.txt
 
 venv
 __pycache__/
