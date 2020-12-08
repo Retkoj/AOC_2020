@@ -20,7 +20,6 @@ def find_change(game: GameComputer):
             tmp_dict[index]['action'] = 'nop'
         elif tmp_dict[index]['action'] == 'nop':
             tmp_dict[index]['action'] = 'jmp'
-        game.reset_game()
         game.set_commands(tmp_dict)
         game.run_game()
         if game.status == GameStatus.finished_successfully:

@@ -8,7 +8,8 @@ class GameStatus(Enum):
     not_started = "The game hasn't started yet"
     running = "The game is running"
     finished_successfully = "The game finished successfully"
-    finished_unsuccessfully = "The game quit with an error"
+    finished_unsuccessfully = "Well, the game finished, but not in a good way. " \
+                              "Maybe you two need to work on some issues."
 
 
 class GameComputer:
@@ -58,6 +59,7 @@ class GameComputer:
         If the same index is passed for a second time, the game quits to prevent infinite loops.
         When the game is done, save accumulator value to self.score and print game status
         """
+        self.reset_game()
         valid_index_range = list(range(0, self.number_of_commands))
         already_passed_indexes = []
         self.status = GameStatus.running
@@ -88,8 +90,11 @@ class GameComputer:
         print(f'Game status: {self.status.value}')
 
     def set_commands(self, new_commands: dict):
-        """Brute force set commands dict, useful in day 8_2"""
+        """Brute force set commands dict, useful in day 8_2
+        New commands mean new game, so reset as well"""
         self.commands = deepcopy(new_commands)
+        self.number_of_commands = len(self.commands)
+        self.reset_game()
 
     def make_move(self):
         """Call the function for the current action"""
