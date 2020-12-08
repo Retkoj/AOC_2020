@@ -4,6 +4,7 @@ from copy import deepcopy
 
 
 def make_move(command, index, accumulator):
+    """Execute move actions belonging to command"""
     action, direction, value = command.values()
     if action == 'nop':
         return index + 1, accumulator
@@ -16,6 +17,7 @@ def make_move(command, index, accumulator):
 
 
 def find_original_game_loop(game_input: dict):
+    """"Basically run the code of day 8_1"""
     passed_index = []
     accumulator = 0
     second_run = False
@@ -52,6 +54,7 @@ def play_game_infinite(game_input: dict):
 
 def process(input_list: list) -> dict:
     """
+    Brute force and too extensive parsing
 
     :param input_list:
     :return:
@@ -70,14 +73,17 @@ def process(input_list: list) -> dict:
 
 
 def write_indexes_to_file(original_lines, passed_indexes):
+    """writes the raw values of the passed indexes to a file"""
     file_path = Path().cwd() / 'data' / 'tmp.txt'
     with open(str(file_path), 'w+') as f:
-        # passed_indexes.sort()
+        # passed_indexes.sort()  # Sort by index or keep the run order
         for i in passed_indexes:
             f.write(str(i) + ' ' + original_lines[i] + '\n')
 
 
 def check_indexes(lines, game_dict):
+    """
+    Finds the original loop and writes the raw values of the passed indexes to a file"""
     acc_value, indexes = find_original_game_loop(processed_lines)
     print(f'Accumulator: {acc_value}')
     write_indexes_to_file(lines, indexes)
@@ -102,7 +108,7 @@ def find_correct_change(original_dict):
             tmp_dict[index]['action'] = 'jmp'
         acc_value = play_game_infinite(tmp_dict)
         if acc_value:
-            return acc_value
+            return acc_value, index
     return None
 
 
@@ -113,6 +119,3 @@ if __name__ == '__main__':
     print(f'Output: {processed_lines}')
     acc = find_correct_change(processed_lines)
     print(f'Found it! {acc}')
-
-
-
