@@ -5,9 +5,10 @@ from BoatNavigatorWaypoint import BoatNavigatorWaypoint
 
 def process(input_list: list) -> int:
     """
+    Calculate the final manhattan distance after all instructions have been followed.
 
     :param input_list:
-    :return:
+    :return: manhattan distance
     """
     bn = BoatNavigatorWaypoint(input_list)
     bn.sail_away()

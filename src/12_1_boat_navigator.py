@@ -69,11 +69,11 @@ class BoatNavigator:
 
 def process(input_list: list) -> int:
     """
+    Calculate the final manhattan distance after all instructions have been followed.
 
     :param input_list:
-    :return:
+    :return: manhattan distance
     """
-    total = 0
     bn = BoatNavigator(input_list)
     bn.move()
     total = sum([val for val in bn.location.values() if val > 0])
