@@ -1,13 +1,16 @@
 from copy import deepcopy
 from enum import Enum
+from pathlib import Path
 from typing import List
+import numpy as np
+import matplotlib.pyplot as plt
 
 
-class STATE(Enum):
-    alive = '#'
-    empty = 'L'
-    floor = '.'
-    not_valid = '-'
+class State(Enum):
+    ALIVE = '#'
+    EMPTY = 'L'
+    FLOOR = '.'
+    NOT_VALID = '-'
 
 
 class GameOfLife:
@@ -43,11 +46,11 @@ class GameOfLife:
             def get_state(l):
                 for i in l:
                     if i == '#':
-                        return STATE.alive
+                        return State.ALIVE
                     elif i == 'L':
-                        return STATE.empty
+                        return State.EMPTY
                     elif i == '.':
-                        return STATE.floor
+                        return State.FLOOR
 
             self.matrix = [[get_state(item) for item in list(l)] for l in self.original_input]
             self.new_matrix = deepcopy(self.matrix)
@@ -57,7 +60,7 @@ class GameOfLife:
         """all seat locations, active/filled or empty"""
         for x in self.length_range:
             for y in self.width_range:
-                if self.matrix[x][y] in [STATE.alive, STATE.empty]:
+                if self.matrix[x][y] in [State.ALIVE, State.EMPTY]:
                     self.seat_cells.append((x, y))
 
     def print_matrix(self):
@@ -76,12 +79,14 @@ class GameOfLife:
         x, y = self.current_field
         return self.matrix[x][y]
 
-    def play_game(self, rounds: int = -1, verbose: bool = False):
+    def play_game(self, rounds: int = -1, verbose: bool = False, pretty_print: bool = False):
         print('Commence operation \'stoelendans\'')
         while (not self.stabilized) and self.round != rounds:
             self.play_round()
             if verbose:
                 self.print_matrix()
+            if pretty_print:
+                self.pretty_print()
             if self.stabilized:
                 self.count_alive()
                 print(f'Stabilized in round{self.round}, Seats occupied: {self.alive_cells}')
@@ -102,7 +107,7 @@ class GameOfLife:
     def process_current_seat(self):
         """Get the count of alive (filled) seats from LoS,
         check and return new seat state"""
-        if self.get_current_value() == STATE.floor:  # Since we're only looping through seat cells, this is redundant
+        if self.get_current_value() == State.FLOOR:  # Since we're only looping through seat cells, this is redundant
             return self.get_current_value()
         count_alive = self.check_surrounding_fields()
         return self.check_rules(count_alive)
@@ -114,10 +119,10 @@ class GameOfLife:
         - Otherwise; seat stays the same state
         :return: state
         """
-        if count_alive == 0 and self.get_current_value() == STATE.empty:
-            return STATE.alive
-        elif count_alive >= self.crowd and self.get_current_value() == STATE.alive:
-            return STATE.empty
+        if count_alive == 0 and self.get_current_value() == State.EMPTY:
+            return State.ALIVE
+        elif count_alive >= self.crowd and self.get_current_value() == State.ALIVE:
+            return State.EMPTY
         else:
             return self.get_current_value()
 
@@ -132,7 +137,7 @@ class GameOfLife:
             else:
                 self.cached_line_of_sight[self.current_field] = self.fields_in_sight()
         indices = self.cached_line_of_sight[self.current_field]
-        count_alive = sum([1 for x, y in indices if self.matrix[x][y] == STATE.alive])
+        count_alive = sum([1 for x, y in indices if self.matrix[x][y] == State.ALIVE])
         return count_alive
 
     def check_valid_LOS_coordinate(self, x, y):
@@ -219,4 +224,18 @@ class GameOfLife:
 
     def count_alive(self):
         """Count alive cells (filled seats) in the total matrix"""
-        self.alive_cells = sum([sum([1 for seat in row if seat == STATE.alive]) for row in self.matrix])
+        self.alive_cells = sum([sum([1 for seat in row if seat == State.ALIVE]) for row in self.matrix])
+
+    def pretty_print(self):
+        state_nums = {
+            State.ALIVE: 2,
+            State.EMPTY: 1,
+            State.FLOOR: 0
+        }
+        tmp_mat = [[state_nums[s] for s in row] for row in self.matrix]
+        tmp = np.array(tmp_mat)
+        plt.matshow(tmp)
+        plot_folder = Path().cwd() / 'timelapse_GoL'
+        plot_folder.mkdir(exist_ok=True)
+        plt.savefig(plot_folder / f'{self.round}.jpg')
+        plt.close()

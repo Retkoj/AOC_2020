@@ -11,8 +11,8 @@ def process(input_list: list) -> int:
     """
     total = 0
     gol = GameOfLife(input_list, crowd=5)
-    gol.print_matrix()
-    gol.play_game(verbose=False)
+    # gol.print_matrix()
+    gol.play_game(verbose=False, pretty_print=False)
     return total
 
 

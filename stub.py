@@ -1,7 +1,8 @@
 import fileinput
+from typing import List
 
 
-def process(input_list: list) -> int:
+def process(input_list: List) -> int:
     """
 
     :param input_list:
