@@ -12,7 +12,7 @@ def all_permutations(length: int):
     for i in range(1, length + 1):
         rep = 2**i / 2
         new_values = np.repeat(values, rep)
-        new_values = np.tile(new_values, int(int(number_of_combinations / rep)/2))
+        new_values = np.tile(new_values, int(int(number_of_combinations / rep) / 2))
         all_combinations.append(new_values)
     return all_combinations
 
